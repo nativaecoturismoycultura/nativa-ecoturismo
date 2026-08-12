@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nativa - Turismo sostenible en Suba, Bogotá. Conecta con humedales, huertas y comunidades.">
+    <meta name="theme-color" content="#173f35">
+    
+    <!-- Seguridad -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https://images.pexels.com https://media.canva.com; style-src 'self' 'unsafe-inline'; script-src 'self'">
+    
+    <title>Nativa · Turismo Sostenible en Suba</title>
+    
+    <!-- CSS Principal -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Preconexión para optimizar carga -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fuentes optimizadas -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Skip link para accesibilidad -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- ============ HEADER / NAVEGACIÓN ============ -->
+    <header class="header" role="banner">
+        <nav class="nav-container" role="navigation" aria-label="Navegación principal">
+            <div class="nav-logo">
+                <img src="assets/icons/logo-nativa.svg" alt="Nativa - Turismo Comunitario" width="50" height="50" loading="lazy">
+                <span class="nav-brand">NATIVA</span>
+                <span class="nav-subtitle">Suba · Bogotá</span>
+            </div>
+            
+            <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">
+                <span class="hamburger"></span>
+            </button>
+
+            <ul class="nav-menu">
+                <li><a href="#inicio" class="active" aria-current="page">Inicio</a></li>
+                <li><a href="#experiencias">Experiencias</a></li>
+                <li><a href="#marketplace">Marketplace</a></li>
+                <li><a href="#directorio">Directorio</a></li>
+                <li><a href="#reservas" class="nav-cta">Reserva tu ruta</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ============ CONTENIDO PRINCIPAL ============ -->
+    <main id="main-content">
+        
+        <!-- ===== SECCIÓN HERO ===== -->
+        <section id="inicio" class="hero" aria-labelledby="hero-title">
+            <div class="hero-content">
+                <p class="hero-eyebrow">🌿 ecoTurismo comunitario en bicicleta</p>
+                <h1 id="hero-title" class="hero-title">Suba se recorre con los pies, la bici y la memoria.</h1>
+                <p class="hero-description">Conecta con los humedales, las huertas y las voces que protegen este territorio vivo de Bogotá.</p>
+                
+                <div class="hero-buttons">
+                    <a href="#experiencias" class="btn btn-primary">Explorar experiencias</a>
+                    <a href="#marketplace" class="btn btn-secondary">Conocer el mercado</a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">humedales para conocer</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">rutas de memoria viva</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">compromiso territorial</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <img src="assets/images/hero-bicicleta.jpg" alt="Ciclista se detiene en un sendero de bosque iluminado rodeado de agua y vegetación" loading="eager" width="800" height="600">
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN HOME ===== -->
+        <section class="home" aria-labelledby="home-title">
+            <div class="container">
+                <p class="section-eyebrow">✨ Una vitrina para el territorio</p>
+                <h2 id="home-title" class="section-title">Viaja, encuentra y apoya iniciativas que nacen en Suba.</h2>
+                <p class="section-description">Nativa conecta experiencias de bajo impacto con productos, servicios y saberes locales para que cada visita deje raíces.</p>
+                
+                <div class="home-grid">
+                    <article class="home-card home-card-route">
+                        <h3 class="card-title">Experiencias que se viven despacio</h3>
+                        <p class="card-text">Dos rutas guiadas para acercarte al agua, la biodiversidad y las memorias comunitarias.</p>
+                        <a href="#experiencias" class="btn btn-outline">Ver rutas</a>
+                    </article>
+                    
+                    <article class="home-card home-card-market">
+                        <h3 class="card-title">Llévate una historia hecha aquí</h3>
+                        <p class="card-text">Explora piezas, alimentos y oficios locales que mantienen vivo el vínculo entre comunidad y territorio.</p>
+                        <a href="#marketplace" class="btn btn-primary">Entrar al marketplace</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN EXPERIENCIAS ===== -->
+        <section id="experiencias" class="routes" aria-labelledby="routes-title">
+            <div class="container">
+                <p class="section-eyebrow">🚴 Rutas Nativa</p>
+                <h2 id="routes-title" class="section-title">Pedalea al ritmo del agua y la palabra.</h2>
+                <p class="section-description">Recorridos de baja huella para escuchar el territorio con quienes lo habitan y cuidan.</p>
+                
+                <div class="routes-grid">
+                    <article class="route-card" data-route="rios">
+                        <div class="route-image">
+                            <img src="assets/images/ruta-rios.jpg" alt="Garza junto a vegetación exuberante en Briceño, Colombia" loading="lazy" width="400" height="300">
+                            <span class="route-tag">💧 Agua y biodiversidad</span>
+                        </div>
+                        <div class="route-content">
+                            <h3 class="route-title">Entre Ríos</h3>
+                            <p class="route-description">Una travesía entre canales, aves y relatos de restauración alrededor de los humedales de Suba.</p>
+                            <div class="route-meta">
+                                <span>📍 12 km</span>
+                                <span>⏱️ 3 horas</span>
+                            </div>
+                            <a href="#reservas" class="btn btn-route">Reservar esta ruta</a>
+                        </div>
+                    </article>
+                    
+                    <article class="route-card" data-route="sabana">
+                        <div class="route-image">
+                            <img src="assets/images/ruta-sabana.jpg" alt="Ritual cultural con fuego y música en Bogotá, Colombia" loading="lazy" width="400" height="300">
+                            <span class="route-tag">🔥 Memoria ancestral</span>
+                        </div>
+                        <div class="route-content">
+                            <h3 class="route-title">Sabana Ancestral</h3>
+                            <p class="route-description">Una experiencia de interpretación cultural junto a memorias muiscas, caminos rurales y saberes de la sabana.</p>
+                            <div class="route-meta">
+                                <span>📍 18 km</span>
+                                <span>⏱️ 4 horas</span>
+                            </div>
+                            <a href="#reservas" class="btn btn-route">Reservar esta ruta</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN MARKETPLACE ===== -->
+        <section id="marketplace" class="marketplace" aria-labelledby="marketplace-title">
+            <div class="container">
+                <p class="section-eyebrow" style="color: #d8b36b;">🛍️ Marketplace turístico</p>
+                <h2 id="marketplace-title" class="section-title" style="color: #f8f4ea;">Llévate una historia hecha en el territorio.</h2>
+                <p class="section-description" style="color: #dce8df;">Productos artesanales, agroecológicos y botánicos elaborados por iniciativas locales de Suba.</p>
+                
+                <div class="market-grid">
+                    <!-- Producto 1 -->
+                    <article class="market-card">
+                        <img src="assets/images/ceramica.jpg" alt="Cerámicas artesanales coloridas" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Cerámica de territorio</h3>
+                        <p class="market-description">Piezas inspiradas en las aguas, semillas y aves de la sabana.</p>
+                        <button class="btn btn-market" data-producto="ceramica">Me interesa</button>
+                    </article>
+                    
+                    <!-- Producto 2 -->
+                    <article class="market-card">
+                        <img src="assets/images/canasta.jpg" alt="Mujer lleva canasta con verduras frescas" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Canasta agroecológica</h3>
+                        <p class="market-description">Cosechas de huertas urbanas, frescas y cultivadas con cuidado.</p>
+                        <button class="btn btn-market" data-producto="canasta">Me interesa</button>
+                    </article>
+                    
+                    <!-- Producto 3 -->
+                    <article class="market-card">
+                        <img src="assets/images/botanica.jpg" alt="Jabones orgánicos artesanales" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Botánica local</h3>
+                        <p class="market-description">Jabones, ungüentos e infusiones de plantas de uso responsable.</p>
+                        <button class="btn btn-market" data-producto="botanica">Me interesa</button>
+                    </article>
+                    
+                    <!-- Producto 4 -->
+                    <article class="market-card">
+                        <img src="assets/images/tejidos.jpg" alt="Bolso tejido artesanal de colores" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Tejidos de memoria</h3>
+                        <p class="market-description">Accesorios tejidos que llevan color, oficio y relatos comunitarios.</p>
+                        <button class="btn btn-market" data-producto="tejidos">Me interesa</button>
+                    </article>
+                    
+                    <!-- Producto 5 -->
+                    <article class="market-card">
+                        <img src="assets/images/joyeria.jpg" alt="Mujer muestra collares artesanales" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Joyería artesanal</h3>
+                        <p class="market-description">Pequeñas piezas elaboradas a mano para celebrar el detalle.</p>
+                        <button class="btn btn-market" data-producto="joyeria">Me interesa</button>
+                    </article>
+                    
+                    <!-- Producto 6 -->
+                    <article class="market-card">
+                        <img src="assets/images/cafe.jpg" alt="Granos de café colombiano" loading="lazy" width="300" height="200">
+                        <h3 class="market-title">Café de origen</h3>
+                        <p class="market-description">Tostión local en pequeños lotes para acompañar cada conversación.</p>
+                        <button class="btn btn-market" data-producto="cafe">Me interesa</button>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN DIRECTORIO ===== -->
+        <section id="directorio" class="directory" aria-labelledby="directorio-title">
+            <div class="container">
+                <p class="section-eyebrow">📍 Directorio local</p>
+                <h2 id="directorio-title" class="section-title">Aliados para vivir Suba con más calma.</h2>
+                <p class="section-description">Una selección de hospedajes, servicios y emprendimientos para extender tu visita de forma consciente.</p>
+                
+                <div class="directory-grid">
+                    <article class="directory-card">
+                        <img src="assets/images/refugio-verde.jpg" alt="Casa de madera tipo refugio rodeada por bosque" loading="lazy" width="300" height="200">
+                        <span class="directory-type">🏠 Hospedaje aliado</span>
+                        <h3 class="directory-title">Refugio Verde</h3>
+                        <p class="directory-description">Alojamiento de escala pequeña para descansar cerca de la naturaleza.</p>
+                    </article>
+                    
+                    <article class="directory-card">
+                        <img src="assets/images/casa-patio.jpg" alt="Patio colonial con fuente en Bogotá" loading="lazy" width="300" height="200">
+                        <span class="directory-type">🏙️ Hospedaje urbano</span>
+                        <h3 class="directory-title">Casa Patio Suba</h3>
+                        <p class="directory-description">Un punto de descanso con vegetación, historia y cercanía a la ciudad.</p>
+                    </article>
+                    
+                    <article class="directory-card">
+                        <img src="assets/images/bici-barrio.jpg" alt="Bicicletas estacionadas frente a tienda de alquiler" loading="lazy" width="300" height="200">
+                        <span class="directory-type">🚲 Servicio turístico</span>
+                        <h3 class="directory-title">Bici Barrio</h3>
+                        <p class="directory-description">Apoyo para movilidad, ajustes y alquiler de bicicletas para visitantes.</p>
+                    </article>
+                    
+                    <article class="directory-card">
+                        <img src="assets/images/cocina-huerta.jpg" alt="Vendedora sirve comida caliente en calle de Bogotá" loading="lazy" width="300" height="200">
+                        <span class="directory-type">🍲 Sabores locales</span>
+                        <h3 class="directory-title">Cocina de la Huerta</h3>
+                        <p class="directory-description">Preparaciones de temporada con ingredientes cercanos y conversación abierta.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== SECCIÓN RESERVAS ===== -->
+        <section id="reservas" class="booking" aria-labelledby="booking-title">
+            <div class="container">
+                <p class="section-eyebrow" style="color: #ae653d;">📋 Reservas y pagos</p>
+                <h2 id="booking-title" class="section-title">Tu próxima pedalada empieza aquí.</h2>
+                
+                <form id="booking-form" class="booking-form" novalidate>
+                    <div class="form-group">
+                        <label for="booking-name">Nombre de la persona responsable</label>
+                        <input type="text" id="booking-name" name="nombre" placeholder="Ej: María González" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-email">Correo electrónico</label>
+                        <input type="email" id="booking-email" name="email" placeholder="ejemplo@correo.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-phone">Teléfono de contacto</label>
+                        <input type="tel" id="booking-phone" name="telefono" placeholder="300 123 4567" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-experience">Experiencia elegida</label>
+                        <select id="booking-experience" name="experiencia" required>
+                            <option value="">Selecciona una ruta</option>
+                            <option value="rios">🌊 Entre Ríos</option>
+                            <option value="sabana">🔥 Sabana Ancestral</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-date">Fecha deseada</label>
+                        <input type="date" id="booking-date" name="fecha" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-group">Número de participantes</label>
+                        <input type="number" id="booking-group" name="participantes" min="5" max="20" value="5" required>
+                        <span class="form-help">Mínimo 5 · máximo 20 personas</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="booking-notes">Necesidades o comentarios</label>
+                        <textarea id="booking-notes" name="notas" rows="3" placeholder="Cuéntanos qué ruta deseas vivir. Trabajamos con grupos de 5 a 20 personas para cuidar la calidad, la seguridad y el territorio."></textarea>
+                    </div>
+                    
+                    <div class="booking-notice">
+                        <p>📌 Esta es una solicitud de reserva. Una persona de Nativa confirmará cupos, accesibilidad requerida y las opciones de pago disponibles.</p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-submit">Enviar solicitud de reserva</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h2>Nativa · turismo que deja raíces.</h2>
+                    <p>Una invitación a recorrer Suba desde el respeto, la curiosidad y la corresponsabilidad con sus comunidades y ecosistemas.</p>
+                    <p class="footer-copy">© 2026 Nativa Turismo Comunitario · Suba, Bogotá, Colombia.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="script.js" defer></script>
+</body>
+</html>
