@@ -271,10 +271,13 @@ function mostrarExito(datos) {
         nombre: datos.nombre,
         fecha: new Date().toISOString()
     }));
-}
 
-// ===== FUNCIÓN PARA CERRAR EL MENSAJE DE ÉXITO =====
-function cerrarMensajeExito() {
+// ============================================
+// EXPONER FUNCIONES GLOBALES PARA EL HTML
+// ============================================
+
+// Hacer que cerrarMensajeExito sea accesible desde el HTML
+window.cerrarMensajeExito = function() {
     const mensaje = document.querySelector('.form-success');
     if (mensaje) {
         mensaje.style.animation = 'fadeOutDown 0.4s ease';
@@ -282,8 +285,15 @@ function cerrarMensajeExito() {
             mensaje.remove();
             // Mostrar el formulario nuevamente
             const form = document.getElementById('booking-form');
-            form.style.display = 'block';
-            form.style.animation = 'fadeInUp 0.5s ease';
+            if (form) {
+                form.style.display = 'block';
+                form.style.animation = 'fadeInUp 0.5s ease';
+            }
         }, 400);
     }
-}
+};
+
+// También exponer mostrarExito por si acaso
+window.mostrarExito = mostrarExito;
+
+console.log('✅ Funciones globales registradas correctamente');
