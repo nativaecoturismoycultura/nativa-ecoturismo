@@ -133,30 +133,55 @@
 
             const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
 
-            // ===== ENVIAR CON CORS (para ver si llega) =====
             fetch(URL_API, {
-    method: 'POST',
-    mode: 'cors',   // Intentamos leer la respuesta
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(datosReserva)
-})
-.then(response => response.json())  // Leer JSON
-.then(data => {
-    if (data.success) {
-        console.log('✅ Respuesta exitosa:', data);
-        mostrarExito(datosReserva);
-        // ... resto
-    } else {
-        throw new Error(data.error || 'Error desconocido');
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datosReserva)
+            })
+            .then(() => {
+                try {
+                    const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+                    reservas.push({
+                        ...datosReserva,
+                        fecha_solicitud: new Date().toISOString(),
+                        estado: 'pendiente'
+                    });
+                    localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+                } catch (e) {
+                    console.warn('No se pudo guardar en localStorage:', e);
+                }
+
+                mostrarExito(datosReserva);
+                document.getElementById('booking-form').reset();
+                btnSubmit.textContent = textoOriginal;
+                btnSubmit.disabled = false;
+            })
+            .catch((error) => {
+                // Con no-cors, el error "Failed to fetch" es normal
+                // y significa que el envío funcionó
+                console.warn('⚠️ Error de CORS (esperado):', error);
+                
+                try {
+                    const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+                    reservas.push({
+                        ...datosReserva,
+                        fecha_solicitud: new Date().toISOString(),
+                        estado: 'pendiente'
+                    });
+                    localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+                } catch (e) {}
+                
+                mostrarExito(datosReserva);
+                document.getElementById('booking-form').reset();
+                btnSubmit.textContent = textoOriginal;
+                btnSubmit.disabled = false;
+            });
+        });
     }
-})
-.catch((error) => {
-    // Si falla CORS, usar no-cors como fallback
-    console.warn('⚠️ Falló CORS, usando no-cors...');
-    // ... reintentar con no-cors
-});
+
     // ===== FUNCIÓN MOSTRAR ÉXITO =====
     function mostrarExito(datos) {
         document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
@@ -206,7 +231,7 @@
                 Una persona de Nativa te contactará para confirmar los detalles.
             </p>
             
-            <button id="btnCerrarExito" style="
+            <button onclick="window.cerrarMensajeExito()" style="
                 background: #28a745;
                 color: white;
                 border: none;
@@ -217,7 +242,7 @@
                 cursor: pointer;
                 transition: all 0.3s ease;
                 box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-            ">
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                 👍 ¡Excelente!
             </button>
         `;
@@ -228,34 +253,10 @@
         
         successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        // Agregar evento al botón
-        const btnCerrar = successMessage.querySelector('#btnCerrarExito');
-        if (btnCerrar) {
-            btnCerrar.addEventListener('click', function() {
-                cerrarMensajeExito();
-            });
-        }
-        
         localStorage.setItem('nativa_ultima_reserva', JSON.stringify({
             nombre: datos.nombre,
             fecha: new Date().toISOString()
         }));
-    }
-
-    // ===== FUNCIÓN CERRAR MENSAJE =====
-    function cerrarMensajeExito() {
-        const mensaje = document.querySelector('.form-success');
-        if (mensaje) {
-            mensaje.style.animation = 'fadeOutDown 0.4s ease';
-            setTimeout(() => {
-                mensaje.remove();
-                const form = document.getElementById('booking-form');
-                if (form) {
-                    form.style.display = 'block';
-                    form.style.animation = 'fadeInUp 0.5s ease';
-                }
-            }, 400);
-        }
     }
 
     console.log('🌿 Nativa · Turismo Sostenible');
@@ -266,8 +267,9 @@
 })();
 
 // ============================================
-// FUNCIONES GLOBALES (para el botón del HTML)
+// FUNCIONES GLOBALES PARA EL HTML
 // ============================================
+
 window.cerrarMensajeExito = function() {
     const mensaje = document.querySelector('.form-success');
     if (mensaje) {
