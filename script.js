@@ -101,130 +101,143 @@
         });
     });
 
-    // ===== FORMULARIO DE RESERVAS =====
-    const bookingForm = document.getElementById('booking-form');
+   // ===== FORMULARIO DE RESERVAS =====
+const bookingForm = document.getElementById('booking-form');
 
-    if (bookingForm) {
-        bookingForm.addEventListener('submit', function(e) {
-            e.preventDefault();bookingForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+if (bookingForm) {
+    bookingForm.addEventListener('submit', function(e) {
+        e.preventDefault();
 
-    // ===== RECOLECTAR DATOS DEL FORMULARIO =====
-    const nombre = document.getElementById('booking-name').value.trim();
-    const email = document.getElementById('booking-email').value.trim();
-    const telefono = document.getElementById('booking-phone').value.trim();
-    const experiencia = document.getElementById('booking-experience').value;
-    const fecha = document.getElementById('booking-date').value;
-    const participantes = parseInt(document.getElementById('booking-group').value);
-    const notas = document.getElementById('booking-notes').value.trim();
+        // ===== RECOLECTAR DATOS =====
+        const nombre = document.getElementById('booking-name').value.trim();
+        const email = document.getElementById('booking-email').value.trim();
+        const telefono = document.getElementById('booking-phone').value.trim();
+        const experiencia = document.getElementById('booking-experience').value;
+        const fecha = document.getElementById('booking-date').value;
+        const participantes = parseInt(document.getElementById('booking-group').value);
+        const notas = document.getElementById('booking-notes').value.trim();
 
-    // ===== VALIDACIÓN RÁPIDA =====
-    if (!nombre || !email || !telefono || !experiencia || !fecha) {
-        alert('⚠️ Por favor completa todos los campos obligatorios');
-        return;
-    }
+        // ===== VALIDACIÓN =====
+        if (!nombre || !email || !telefono || !experiencia || !fecha) {
+            alert('⚠️ Por favor completa todos los campos obligatorios');
+            return;
+        }
 
-    // ===== MOSTRAR MENSAJE DE "ENVIANDO..." =====
-    const btnSubmit = this.querySelector('.btn-submit');
-    const textoOriginal = btnSubmit.textContent;
-    btnSubmit.textContent = '⏳ Enviando...';
-    btnSubmit.disabled = true;
+        // ===== BOTÓN DE ENVÍO =====
+        const btnSubmit = this.querySelector('.btn-submit');
+        const textoOriginal = btnSubmit.textContent;
+        btnSubmit.textContent = '⏳ Enviando...';
+        btnSubmit.disabled = true;
 
-    // ===== CREAR EL OBJETO DE DATOS =====
-    const datosReserva = {
-        nombre: nombre,
-        email: email,
-        telefono: telefono,
-        experiencia: experiencia,
-        fecha: fecha,
-        participantes: participantes,
-        notas: notas
-    };
+        // ===== DATOS A ENVIAR =====
+        const datosReserva = {
+            nombre: nombre,
+            email: email,
+            telefono: telefono,
+            experiencia: experiencia,
+            fecha: fecha,
+            participantes: participantes,
+            notas: notas
+        };
 
-    console.log('📤 Enviando datos:', datosReserva);
+        console.log('📤 Enviando datos:', datosReserva);
 
-    // ===== ENVIAR A GOOGLE SHEETS =====
-    // ⚠️ ¡REEMPLAZA ESTA URL CON LA QUE COPIATE EN EL PASO 3!
-    const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
+        // ⚠️ ¡REEMPLAZA CON TU URL DE APPS SCRIPT!
+        const URL_API = 'https://script.google.com/macros/s/TU_CODIGO_AQUI/exec';
 
-    fetch(URL_API, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datosReserva)
-    })
-    .then(() => {
-        // ===== GUARDAR EN LOCALSTORAGE (respaldo) =====
-        try {
-            const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
-            reservas.push({
-                ...datosReserva,
-                fecha_solicitud: new Date().toISOString(),
-                estado: 'pendiente'
+        // ===== ENVIAR CON fetch (con manejo de errores mejorado) =====
+        fetch(URL_API, {
+            method: 'POST',
+            mode: 'cors',  // Cambiamos de 'no-cors' a 'cors'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(datosReserva)
+        })
+        .then(response => {
+            console.log('📥 Respuesta recibida:', response.status);
+            
+            // Intentar leer la respuesta como JSON
+            return response.json().then(data => {
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en el servidor');
+                }
+                return data;
+            }).catch(() => {
+                // Si no es JSON, intentar leer como texto
+                return response.text().then(text => {
+                    if (response.ok) {
+                        return { success: true, message: text };
+                    } else {
+                        throw new Error('Error ' + response.status + ': ' + text);
+                    }
+                });
             });
-            localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
-        } catch (e) {
-            console.warn('No se pudo guardar en localStorage:', e);
-        }
+        })
+        .then(data => {
+            console.log('✅ Éxito:', data);
+            
+            // Guardar en localStorage (respaldo)
+            try {
+                const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+                reservas.push({
+                    ...datosReserva,
+                    fecha_solicitud: new Date().toISOString(),
+                    estado: 'pendiente'
+                });
+                localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+            } catch (e) {
+                console.warn('No se pudo guardar en localStorage:', e);
+            }
 
-        // ===== MOSTRAR MENSAJE DE ÉXITO =====
-        mostrarExito(datosReserva);
-        
-        // Resetear formulario
-        this.reset();
-    })
-    .catch((error) => {
-        console.error('❌ Error al enviar:', error);
-        alert('❌ Hubo un error al enviar tu reserva. Por favor intenta de nuevo.');
-    })
-    .finally(() => {
-        btnSubmit.textContent = textoOriginal;
-        btnSubmit.disabled = false;
-    });
-});
+            // Mostrar éxito
+            mostrarExito(datosReserva);
+            this.reset();
+        })
+        .catch((error) => {
+            console.error('❌ Error completo:', error);
+            
+            // ===== INTENTAR CON MÉTODO ALTERNATIVO =====
+            // Si falla con CORS, intentamos con un método alternativo
+            console.log('🔄 Intentando método alternativo...');
+            
+            // Crear un formulario invisible
+            const formAlternativo = document.createElement('form');
+            formAlternativo.method = 'POST';
+            formAlternativo.action = URL_API;
+            formAlternativo.style.display = 'none';
+            
+            // Agregar los datos como campos ocultos
+            Object.keys(datosReserva).forEach(key => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = datosReserva[key];
+                formAlternativo.appendChild(input);
+            });
+            
+            document.body.appendChild(formAlternativo);
+            formAlternativo.submit();
+            
+            // Mostrar mensaje de que se está procesando
+            alert('📤 Enviando tu reserva... Por favor espera un momento.');
+            
+            // Resetear botón
+            btnSubmit.textContent = textoOriginal;
+            btnSubmit.disabled = false;
+        })
+        .finally(() => {
+            // Si no se reseteó antes
+            if (btnSubmit.textContent === '⏳ Enviando...') {
+                btnSubmit.textContent = textoOriginal;
+                btnSubmit.disabled = false;
+            }
         });
+    });
+}
 
-        // Función auxiliar para mostrar error en un campo
-        function showFieldError(field, message) {
-            field.style.borderColor = '#e74c3c';
-            const error = document.createElement('span');
-            error.className = 'form-error';
-            error.style.cssText = `
-                display: block;
-                font-size: 0.85rem;
-                color: #e74c3c;
-                margin-top: var(--spacing-xs);
-            `;
-            error.textContent = '⚠️ ' + message;
-            field.parentNode.appendChild(error);
-
-            // Limpiar error al escribir
-            field.addEventListener('input', function cleanup() {
-                this.style.borderColor = '';
-                const err = this.parentNode.querySelector('.form-error');
-                if (err) err.remove();
-                this.removeEventListener('input', cleanup);
-            }, { once: true });
-        }
-
-        // Función auxiliar para validar email
-        function isValidEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
-
-        // Función auxiliar para obtener label de experiencia
-        function getExperienceLabel(value) {
-            const labels = {
-                'rios': '🌊 Entre Ríos',
-                'sabana': '🔥 Sabana Ancestral'
-            };
-            return labels[value] || value;
-        }
-    }// ===== FUNCIÓN PARA MOSTRAR MENSAJE DE ÉXITO =====
+// ===== FUNCIÓN MOSTRAR ÉXITO =====
 function mostrarExito(datos) {
-    // Remover mensajes anteriores
     document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
     
     const successMessage = document.createElement('div');
@@ -273,11 +286,8 @@ function mostrarExito(datos) {
     
     const form = document.getElementById('booking-form');
     form.insertBefore(successMessage, form.firstChild);
-    
-    // Scroll al mensaje
     successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
-
     // ===== DETECCIÓN DE CONEXIÓN =====
     if ('connection' in navigator) {
         const connection = navigator.connection;
