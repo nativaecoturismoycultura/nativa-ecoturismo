@@ -145,7 +145,7 @@
 
     // ===== ENVIAR A GOOGLE SHEETS =====
     // ⚠️ ¡REEMPLAZA ESTA URL CON LA QUE COPIATE EN EL PASO 3!
-    const URL_API = 'https://script.google.com/macros/s/AKfycbw-TFGzcZXgGxegGWy1FcGyNBYguU8GWAi8Nn6NqJa1RGwV-ph_BGq1E3RpwRBOcd1-/exec';
+    const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
 
     fetch(URL_API, {
         method: 'POST',
