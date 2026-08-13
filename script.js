@@ -143,7 +143,7 @@ if (bookingForm) {
         console.log('📤 Enviando datos:', datosReserva);
 
         // ⚠️ ¡REEMPLAZA CON TU URL DE APPS SCRIPT!
-        const URL_API = 'https://script.google.com/macros/s/TU_CODIGO_AQUI/exec';
+        const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
 
         // ===== ENVIAR CON fetch (con manejo de errores mejorado) =====
         fetch(URL_API, {
