@@ -305,3 +305,104 @@ function mostrarExito(datos) {
     console.log('♿ Accesibilidad: ARIA labels, skip links, semántica HTML5');
 
 })();
+    // =============================================
+    // DASHBOARD Y ESTADÍSTICAS (EXTRA)
+    // =============================================
+    
+    // ===== VER ESTADÍSTICAS DE RESERVAS =====
+    function verEstadisticas() {
+        try {
+            const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+            
+            if (reservas.length === 0) {
+                alert('📊 No hay reservas para mostrar');
+                return;
+            }
+            
+            const total = reservas.length;
+            const experiencias = {};
+            let fechaReciente = '';
+            
+            reservas.forEach(r => {
+                experiencias[r.experiencia] = (experiencias[r.experiencia] || 0) + 1;
+                if (r.fecha > fechaReciente) fechaReciente = r.fecha;
+            });
+            
+            let mensaje = '📊 ESTADÍSTICAS NATIVA\n\n';
+            mensaje += `Total de reservas: ${total}\n`;
+            mensaje += `Última reserva: ${fechaReciente}\n\n`;
+            mensaje += '📋 Por experiencia:\n';
+            Object.entries(experiencias).forEach(([key, value]) => {
+                const labels = { 'rios': '🌊 Entre Ríos', 'sabana': '🔥 Sabana Ancestral' };
+                mensaje += `  ${labels[key] || key}: ${value}\n`;
+            });
+            
+            alert(mensaje);
+        } catch (e) {
+            console.error('Error:', e);
+        }
+    }
+
+    // ===== BOTÓN DE ESTADÍSTICAS =====
+    const statsBtn = document.createElement('button');
+    statsBtn.textContent = '📊 Estadísticas';
+    statsBtn.style.cssText = `
+        position: fixed;
+        bottom: 200px;
+        right: 20px;
+        background: #ae653d;
+        color: #f8f4ea;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 9998;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        font-size: 0.9rem;
+    `;
+    statsBtn.onclick = verEstadisticas;
+    document.body.appendChild(statsBtn);
+
+    // ===== BOTÓN "MIS RESERVAS" =====
+    function verReservasGuardadas() {
+        try {
+            const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+            if (reservas.length === 0) {
+                alert('📭 No tienes reservas guardadas');
+                return;
+            }
+            
+            let mensaje = '📋 MIS RESERVAS:\n\n';
+            reservas.forEach((r, i) => {
+                const labels = { 'rios': '🌊 Entre Ríos', 'sabana': '🔥 Sabana Ancestral' };
+                mensaje += `${i+1}. ${r.nombre}\n`;
+                mensaje += `   ${labels[r.experiencia] || r.experiencia}\n`;
+                mensaje += `   📅 ${r.fecha} · 👥 ${r.participantes} personas\n`;
+                mensaje += `   Estado: ${r.estado}\n\n`;
+            });
+            alert(mensaje);
+        } catch (e) {
+            console.error('Error:', e);
+        }
+    }
+
+    const resBtn = document.createElement('button');
+    resBtn.textContent = '📋 Mis reservas';
+    resBtn.style.cssText = `
+        position: fixed;
+        bottom: 150px;
+        right: 20px;
+        background: #173f35;
+        color: #f8f4ea;
+        border: none;
+        border-radius: 50px;
+        padding: 10px 18px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 9998;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        font-size: 0.9rem;
+    `;
+    resBtn.onclick = verReservasGuardadas;
+    document.body.appendChild(resBtn);
