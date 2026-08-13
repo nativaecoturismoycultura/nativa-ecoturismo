@@ -135,78 +135,28 @@
 
             // ===== ENVIAR CON CORS (para ver si llega) =====
             fetch(URL_API, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(datosReserva)
-            })
-            .then(response => {
-                console.log('📥 Respuesta:', response.status);
-                return response.json();
-            })
-            .then(data => {
-                console.log('✅ Datos guardados:', data);
-                
-                // Guardar en localStorage
-                try {
-                    const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
-                    reservas.push({
-                        ...datosReserva,
-                        fecha_solicitud: new Date().toISOString(),
-                        estado: 'pendiente'
-                    });
-                    localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
-                } catch (e) {}
-
-                mostrarExito(datosReserva);
-                document.getElementById('booking-form').reset();
-                btnSubmit.textContent = textoOriginal;
-                btnSubmit.disabled = false;
-            })
-            .catch((error) => {
-                console.error('❌ Error en fetch:', error);
-                // Si falla CORS, intentar con no-cors
-                console.log('🔄 Intentando con no-cors...');
-                
-                fetch(URL_API, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(datosReserva)
-                })
-                .then(() => {
-                    console.log('✅ Enviado con no-cors (no se puede ver respuesta)');
-                    
-                    // Guardar en localStorage
-                    try {
-                        const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
-                        reservas.push({
-                            ...datosReserva,
-                            fecha_solicitud: new Date().toISOString(),
-                            estado: 'pendiente'
-                        });
-                        localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
-                    } catch (e) {}
-
-                    mostrarExito(datosReserva);
-                    document.getElementById('booking-form').reset();
-                    btnSubmit.textContent = textoOriginal;
-                    btnSubmit.disabled = false;
-                })
-                .catch((err2) => {
-                    console.error('❌ Error también con no-cors:', err2);
-                    alert('❌ Hubo un error al enviar. Revisa la consola.');
-                    btnSubmit.textContent = textoOriginal;
-                    btnSubmit.disabled = false;
-                });
-            });
-        });
+    method: 'POST',
+    mode: 'cors',   // Intentamos leer la respuesta
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(datosReserva)
+})
+.then(response => response.json())  // Leer JSON
+.then(data => {
+    if (data.success) {
+        console.log('✅ Respuesta exitosa:', data);
+        mostrarExito(datosReserva);
+        // ... resto
+    } else {
+        throw new Error(data.error || 'Error desconocido');
     }
-
+})
+.catch((error) => {
+    // Si falla CORS, usar no-cors como fallback
+    console.warn('⚠️ Falló CORS, usando no-cors...');
+    // ... reintentar con no-cors
+});
     // ===== FUNCIÓN MOSTRAR ÉXITO =====
     function mostrarExito(datos) {
         document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
