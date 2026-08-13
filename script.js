@@ -106,149 +106,84 @@
 
     if (bookingForm) {
         bookingForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+            e.preventDefault();bookingForm.addEventListener('submit', function(e) {
+    e.preventDefault();
 
-            // Validación básica
-            const name = document.getElementById('booking-name');
-            const email = document.getElementById('booking-email');
-            const phone = document.getElementById('booking-phone');
-            const experience = document.getElementById('booking-experience');
-            const date = document.getElementById('booking-date');
-            const group = document.getElementById('booking-group');
+    // ===== RECOLECTAR DATOS DEL FORMULARIO =====
+    const nombre = document.getElementById('booking-name').value.trim();
+    const email = document.getElementById('booking-email').value.trim();
+    const telefono = document.getElementById('booking-phone').value.trim();
+    const experiencia = document.getElementById('booking-experience').value;
+    const fecha = document.getElementById('booking-date').value;
+    const participantes = parseInt(document.getElementById('booking-group').value);
+    const notas = document.getElementById('booking-notes').value.trim();
 
-            let isValid = true;
-            let errorMessages = [];
+    // ===== VALIDACIÓN RÁPIDA =====
+    if (!nombre || !email || !telefono || !experiencia || !fecha) {
+        alert('⚠️ Por favor completa todos los campos obligatorios');
+        return;
+    }
 
-            // Limpiar errores anteriores
-            document.querySelectorAll('.form-error').forEach(el => el.remove());
+    // ===== MOSTRAR MENSAJE DE "ENVIANDO..." =====
+    const btnSubmit = this.querySelector('.btn-submit');
+    const textoOriginal = btnSubmit.textContent;
+    btnSubmit.textContent = '⏳ Enviando...';
+    btnSubmit.disabled = true;
 
-            if (!name.value.trim()) {
-                isValid = false;
-                errorMessages.push('Por favor ingresa tu nombre completo.');
-                showFieldError(name, 'Este campo es obligatorio');
-            }
+    // ===== CREAR EL OBJETO DE DATOS =====
+    const datosReserva = {
+        nombre: nombre,
+        email: email,
+        telefono: telefono,
+        experiencia: experiencia,
+        fecha: fecha,
+        participantes: participantes,
+        notas: notas
+    };
 
-            if (!email.value.trim() || !isValidEmail(email.value)) {
-                isValid = false;
-                errorMessages.push('Por favor ingresa un correo electrónico válido.');
-                showFieldError(email, 'Correo electrónico inválido');
-            }
+    console.log('📤 Enviando datos:', datosReserva);
 
-            if (!phone.value.trim()) {
-                isValid = false;
-                errorMessages.push('Por favor ingresa un número de teléfono de contacto.');
-                showFieldError(phone, 'Este campo es obligatorio');
-            }
+    // ===== ENVIAR A GOOGLE SHEETS =====
+    // ⚠️ ¡REEMPLAZA ESTA URL CON LA QUE COPIATE EN EL PASO 3!
+    const URL_API = 'https://script.google.com/macros/s/AKfycbw-TFGzcZXgGxegGWy1FcGyNBYguU8GWAi8Nn6NqJa1RGwV-ph_BGq1E3RpwRBOcd1-/exec';
 
-            if (!experience.value) {
-                isValid = false;
-                errorMessages.push('Por favor selecciona una experiencia.');
-                showFieldError(experience, 'Selecciona una opción');
-            }
+    fetch(URL_API, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datosReserva)
+    })
+    .then(() => {
+        // ===== GUARDAR EN LOCALSTORAGE (respaldo) =====
+        try {
+            const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+            reservas.push({
+                ...datosReserva,
+                fecha_solicitud: new Date().toISOString(),
+                estado: 'pendiente'
+            });
+            localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+        } catch (e) {
+            console.warn('No se pudo guardar en localStorage:', e);
+        }
 
-            if (!date.value) {
-                isValid = false;
-                errorMessages.push('Por favor selecciona una fecha.');
-                showFieldError(date, 'Este campo es obligatorio');
-            }
-
-            const groupValue = parseInt(group.value);
-            if (isNaN(groupValue) || groupValue < 5 || groupValue > 20) {
-                isValid = false;
-                errorMessages.push('El número de participantes debe ser entre 5 y 20 personas.');
-                showFieldError(group, 'Mínimo 5 · máximo 20');
-            }
-
-            if (!isValid) {
-                // Mostrar mensaje de error general
-                const errorSummary = document.createElement('div');
-                errorSummary.className = 'form-error-summary';
-                errorSummary.style.cssText = `
-                    background-color: #fee;
-                    color: #c0392b;
-                    padding: var(--spacing-md);
-                    border-radius: var(--radius-md);
-                    margin-bottom: var(--spacing-md);
-                    border-left: 4px solid #c0392b;
-                `;
-                errorSummary.innerHTML = `
-                    <strong>❌ Por favor corrige los siguientes errores:</strong>
-                    <ul style="margin-top: var(--spacing-sm); padding-left: var(--spacing-lg);">
-                        ${errorMessages.map(msg => `<li>${msg}</li>`).join('')}
-                    </ul>
-                `;
-                
-                // Remover summary anterior si existe
-                const oldSummary = document.querySelector('.form-error-summary');
-                if (oldSummary) oldSummary.remove();
-                
-                bookingForm.insertBefore(errorSummary, bookingForm.firstChild);
-                
-                // Scroll al primer error
-                const firstError = document.querySelector('.form-error');
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-                return;
-            }
-
-            // Si todo es válido
-            const formData = {
-                nombre: name.value.trim(),
-                email: email.value.trim(),
-                telefono: phone.value.trim(),
-                experiencia: experience.value,
-                fecha: date.value,
-                participantes: groupValue,
-                notas: document.getElementById('booking-notes').value.trim()
-            };
-
-            // Mostrar mensaje de éxito
-            const successMessage = document.createElement('div');
-            successMessage.className = 'form-success';
-            successMessage.style.cssText = `
-                background-color: #e8f8e8;
-                color: #1a7a1a;
-                padding: var(--spacing-lg);
-                border-radius: var(--radius-md);
-                text-align: center;
-                border-left: 4px solid #2ecc71;
-            `;
-            successMessage.innerHTML = `
-                <h3 style="font-family: var(--font-heading);">✅ ¡Reserva solicitada!</h3>
-                <p>Hemos recibido tu solicitud para <strong>${getExperienceLabel(formData.experiencia)}</strong>.</p>
-                <p>Una persona de Nativa se pondrá en contacto contigo para confirmar los detalles.</p>
-                <p style="margin-top: var(--spacing-sm); font-size: 0.9rem; color: #555;">
-                    📧 Se ha enviado una copia a ${formData.email}
-                </p>
-            `;
-
-            // Remover mensajes anteriores
-            document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
-            
-            // Insertar mensaje de éxito
-            bookingForm.insertBefore(successMessage, bookingForm.firstChild);
-            
-            // Resetear el formulario
-            bookingForm.reset();
-
-            // Guardar en localStorage como "reserva pendiente"
-            try {
-                const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
-                reservas.push({
-                    ...formData,
-                    fecha_solicitud: new Date().toISOString(),
-                    estado: 'pendiente'
-                });
-                localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
-            } catch (e) {
-                // Silencioso
-            }
-
-            console.log('📋 Reserva enviada:', formData);
-
-            // Scroll al mensaje
-            successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // ===== MOSTRAR MENSAJE DE ÉXITO =====
+        mostrarExito(datosReserva);
+        
+        // Resetear formulario
+        this.reset();
+    })
+    .catch((error) => {
+        console.error('❌ Error al enviar:', error);
+        alert('❌ Hubo un error al enviar tu reserva. Por favor intenta de nuevo.');
+    })
+    .finally(() => {
+        btnSubmit.textContent = textoOriginal;
+        btnSubmit.disabled = false;
+    });
+});
         });
 
         // Función auxiliar para mostrar error en un campo
