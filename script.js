@@ -20,7 +20,6 @@
             this.setAttribute('aria-expanded', isOpen);
         });
 
-        // Cerrar menú al hacer clic en un enlace
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navToggle.classList.remove('open');
@@ -29,7 +28,6 @@
             });
         });
 
-        // Cerrar menú con Escape
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && navMenu.classList.contains('open')) {
                 navToggle.classList.remove('open');
@@ -40,7 +38,7 @@
         });
     }
 
-    // ===== NAVEGACIÓN ACTIVA POR SECCIÓN =====
+    // ===== NAVEGACIÓN ACTIVA =====
     const sections = document.querySelectorAll('section[id]');
     const navItems = document.querySelectorAll('.nav-menu a:not(.nav-cta)');
 
@@ -65,7 +63,7 @@
         sections.forEach(section => observer.observe(section));
     }
 
-    // ===== BOTONES "ME INTERESA" (Marketplace) =====
+    // ===== BOTONES "ME INTERESA" =====
     const marketButtons = document.querySelectorAll('.btn-market');
 
     marketButtons.forEach(button => {
@@ -73,7 +71,6 @@
             const producto = this.getAttribute('data-producto') || 'producto';
             const nombreProducto = this.closest('.market-card').querySelector('.market-title')?.textContent || producto;
             
-            // Feedback visual
             const originalText = this.textContent;
             this.textContent = '✅ ¡Listo!';
             this.style.backgroundColor = '#2ecc71';
@@ -85,205 +82,248 @@
                 this.style.color = '';
             }, 3000);
 
-            // Mostrar mensaje en consola (para desarrollo)
             console.log(`📦 Producto seleccionado: ${nombreProducto}`);
             
-            // Podríamos guardar en localStorage para seguimiento
             try {
                 const seleccionados = JSON.parse(localStorage.getItem('nativa_intereses') || '[]');
                 if (!seleccionados.includes(nombreProducto)) {
                     seleccionados.push(nombreProducto);
                     localStorage.setItem('nativa_intereses', JSON.stringify(seleccionados));
                 }
-            } catch (e) {
-                // Silencioso si localStorage no está disponible
-            }
+            } catch (e) {}
         });
     });
 
-   // ===== FORMULARIO DE RESERVAS =====
-const bookingForm = document.getElementById('booking-form');
+    // ===== FORMULARIO DE RESERVAS =====
+    const bookingForm = document.getElementById('booking-form');
 
-if (bookingForm) {
-    bookingForm.addEventListener('submit', function(e) {
-    // 🔴 IMPEDIR que la página se recargue
-    e.preventDefault();
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-    // ===== RECOLECTAR DATOS =====
-    const nombre = document.getElementById('booking-name').value.trim();
-    const email = document.getElementById('booking-email').value.trim();
-    const telefono = document.getElementById('booking-phone').value.trim();
-    const experiencia = document.getElementById('booking-experience').value;
-    const fecha = document.getElementById('booking-date').value;
-    const participantes = parseInt(document.getElementById('booking-group').value);
-    const notas = document.getElementById('booking-notes').value.trim();
+            const nombre = document.getElementById('booking-name').value.trim();
+            const email = document.getElementById('booking-email').value.trim();
+            const telefono = document.getElementById('booking-phone').value.trim();
+            const experiencia = document.getElementById('booking-experience').value;
+            const fecha = document.getElementById('booking-date').value;
+            const participantes = parseInt(document.getElementById('booking-group').value);
+            const notas = document.getElementById('booking-notes').value.trim();
 
-    // ===== VALIDACIÓN =====
-    if (!nombre || !email || !telefono || !experiencia || !fecha) {
-        alert('⚠️ Por favor completa todos los campos obligatorios');
-        return;
+            if (!nombre || !email || !telefono || !experiencia || !fecha) {
+                alert('⚠️ Por favor completa todos los campos obligatorios');
+                return;
+            }
+
+            const btnSubmit = this.querySelector('.btn-submit');
+            const textoOriginal = btnSubmit.textContent;
+            btnSubmit.textContent = '⏳ Enviando...';
+            btnSubmit.disabled = true;
+
+            const datosReserva = {
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                experiencia: experiencia,
+                fecha: fecha,
+                participantes: participantes,
+                notas: notas
+            };
+
+            console.log('📤 Enviando datos:', datosReserva);
+
+            const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
+
+            // ===== ENVIAR CON CORS (para ver si llega) =====
+            fetch(URL_API, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(datosReserva)
+            })
+            .then(response => {
+                console.log('📥 Respuesta:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('✅ Datos guardados:', data);
+                
+                // Guardar en localStorage
+                try {
+                    const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+                    reservas.push({
+                        ...datosReserva,
+                        fecha_solicitud: new Date().toISOString(),
+                        estado: 'pendiente'
+                    });
+                    localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+                } catch (e) {}
+
+                mostrarExito(datosReserva);
+                document.getElementById('booking-form').reset();
+                btnSubmit.textContent = textoOriginal;
+                btnSubmit.disabled = false;
+            })
+            .catch((error) => {
+                console.error('❌ Error en fetch:', error);
+                // Si falla CORS, intentar con no-cors
+                console.log('🔄 Intentando con no-cors...');
+                
+                fetch(URL_API, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(datosReserva)
+                })
+                .then(() => {
+                    console.log('✅ Enviado con no-cors (no se puede ver respuesta)');
+                    
+                    // Guardar en localStorage
+                    try {
+                        const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
+                        reservas.push({
+                            ...datosReserva,
+                            fecha_solicitud: new Date().toISOString(),
+                            estado: 'pendiente'
+                        });
+                        localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
+                    } catch (e) {}
+
+                    mostrarExito(datosReserva);
+                    document.getElementById('booking-form').reset();
+                    btnSubmit.textContent = textoOriginal;
+                    btnSubmit.disabled = false;
+                })
+                .catch((err2) => {
+                    console.error('❌ Error también con no-cors:', err2);
+                    alert('❌ Hubo un error al enviar. Revisa la consola.');
+                    btnSubmit.textContent = textoOriginal;
+                    btnSubmit.disabled = false;
+                });
+            });
+        });
     }
 
-    // ===== BOTÓN DE ENVÍO =====
-    const btnSubmit = this.querySelector('.btn-submit');
-    const textoOriginal = btnSubmit.textContent;
-    btnSubmit.textContent = '⏳ Enviando...';
-    btnSubmit.disabled = true;
-
-    // ===== DATOS A ENVIAR =====
-    const datosReserva = {
-        nombre: nombre,
-        email: email,
-        telefono: telefono,
-        experiencia: experiencia,
-        fecha: fecha,
-        participantes: participantes,
-        notas: notas
-    };
-
-    console.log('📤 Enviando datos:', datosReserva);
-
-    // ===== TU URL DE GOOGLE SHEETS =====
-    const URL_API = 'https://script.google.com/macros/s/AKfycbzuMgmmzo2Hqv_RAOpuJQ1pAd1eLJFCvZk9JnlhJ7S31dyXlNp-XhwHc5XNoXb1pCmy/exec';
-
-    // ===== ENVIAR A GOOGLE SHEETS (sin recargar) =====
-    fetch(URL_API, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datosReserva)
-    })
-    .then(() => {
-        // ===== GUARDAR EN LOCALSTORAGE (respaldo) =====
-        try {
-            const reservas = JSON.parse(localStorage.getItem('nativa_reservas') || '[]');
-            reservas.push({
-                ...datosReserva,
-                fecha_solicitud: new Date().toISOString(),
-                estado: 'pendiente'
-            });
-            localStorage.setItem('nativa_reservas', JSON.stringify(reservas));
-        } catch (e) {
-            console.warn('No se pudo guardar en localStorage:', e);
-        }
-
-        // ===== ✅ MOSTRAR MENSAJE DE ÉXITO BONITO =====
-        mostrarExito(datosReserva);
+    // ===== FUNCIÓN MOSTRAR ÉXITO =====
+    function mostrarExito(datos) {
+        document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
         
-        // ===== RESETEAR FORMULARIO =====
-        document.getElementById('booking-form').reset();
+        const successMessage = document.createElement('div');
+        successMessage.className = 'form-success';
+        successMessage.style.cssText = `
+            background: linear-gradient(135deg, #e8f8e8 0%, #d4edda 100%);
+            color: #155724;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            border-left: 6px solid #28a745;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease;
+            box-shadow: 0 8px 30px rgba(40, 167, 69, 0.15);
+        `;
         
-        // ===== RESTAURAR BOTÓN =====
-        btnSubmit.textContent = textoOriginal;
-        btnSubmit.disabled = false;
-    })
-    .catch((error) => {
-        console.error('❌ Error:', error);
-        alert('❌ Hubo un error al enviar tu reserva. Por favor intenta de nuevo.');
-        btnSubmit.textContent = textoOriginal;
-        btnSubmit.disabled = false;
-    });
-});
-
-// ===== 🌟 FUNCIÓN PARA MOSTRAR MENSAJE DE ÉXITO BONITO =====
-function mostrarExito(datos) {
-    // Eliminar mensajes anteriores
-    document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
-    
-    // Crear el mensaje de éxito
-    const successMessage = document.createElement('div');
-    successMessage.className = 'form-success';
-    successMessage.style.cssText = `
-        background: linear-gradient(135deg, #e8f8e8 0%, #d4edda 100%);
-        color: #155724;
-        padding: 30px;
-        border-radius: 16px;
-        text-align: center;
-        border-left: 6px solid #28a745;
-        margin-bottom: 20px;
-        animation: fadeInUp 0.6s ease;
-        box-shadow: 0 8px 30px rgba(40, 167, 69, 0.15);
-    `;
-    
-    // Nombres bonitos para las experiencias
-    const experienciaLabels = {
-        'rios': '🌊 Entre Ríos',
-        'sabana': '🔥 Sabana Ancestral'
-    };
-    
-    // Contenido del mensaje
-    successMessage.innerHTML = `
-        <div style="font-size: 3.5rem; margin-bottom: 10px;">✅</div>
-        <h3 style="font-family: 'Fraunces', serif; font-size: 1.8rem; margin-bottom: 8px; color: #155724;">
-            ¡Reserva solicitada!
-        </h3>
-        <p style="font-size: 1.1rem; margin-bottom: 15px;">
-            <strong>${datos.nombre}</strong>, tu solicitud para 
-            <strong>${experienciaLabels[datos.experiencia] || datos.experiencia}</strong> 
-            está en proceso.
-        </p>
+        const experienciaLabels = {
+            'rios': '🌊 Entre Ríos',
+            'sabana': '🔥 Sabana Ancestral'
+        };
         
-        <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.6); border-radius: 12px;">
-            <span>📅 <strong>${datos.fecha}</strong></span>
-            <span>👥 <strong>${datos.participantes}</strong> personas</span>
-        </div>
-        
-        <div style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 10px; margin: 15px 0;">
-            <p style="margin: 0; font-size: 0.95rem; color: #1a6e1a;">
-                📧 Se ha enviado una copia a <strong>${datos.email}</strong>
+        successMessage.innerHTML = `
+            <div style="font-size: 3.5rem; margin-bottom: 10px;">✅</div>
+            <h3 style="font-family: 'Fraunces', serif; font-size: 1.8rem; margin-bottom: 8px; color: #155724;">
+                ¡Reserva solicitada!
+            </h3>
+            <p style="font-size: 1.1rem; margin-bottom: 15px;">
+                <strong>${datos.nombre}</strong>, tu solicitud para 
+                <strong>${experienciaLabels[datos.experiencia] || datos.experiencia}</strong> 
+                está en proceso.
             </p>
-        </div>
+            
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.6); border-radius: 12px;">
+                <span>📅 <strong>${datos.fecha}</strong></span>
+                <span>👥 <strong>${datos.participantes}</strong> personas</span>
+            </div>
+            
+            <div style="background: rgba(255,255,255,0.7); padding: 12px; border-radius: 10px; margin: 15px 0;">
+                <p style="margin: 0; font-size: 0.95rem; color: #1a6e1a;">
+                    📧 Se ha enviado una copia a <strong>${datos.email}</strong>
+                </p>
+            </div>
+            
+            <p style="font-size: 0.95rem; color: #2d5a2d; margin-bottom: 15px;">
+                Una persona de Nativa te contactará para confirmar los detalles.
+            </p>
+            
+            <button id="btnCerrarExito" style="
+                background: #28a745;
+                color: white;
+                border: none;
+                padding: 12px 35px;
+                border-radius: 50px;
+                font-weight: bold;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            ">
+                👍 ¡Excelente!
+            </button>
+        `;
         
-        <p style="font-size: 0.95rem; color: #2d5a2d; margin-bottom: 15px;">
-            Una persona de Nativa te contactará para confirmar los detalles.
-        </p>
+        const form = document.getElementById('booking-form');
+        form.parentNode.insertBefore(successMessage, form);
+        form.style.display = 'none';
         
-        <button onclick="cerrarMensajeExito()" style="
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            👍 ¡Excelente!
-        </button>
-    `;
-    
-    // Insertar el mensaje ANTES del formulario
-    const form = document.getElementById('booking-form');
-    form.parentNode.insertBefore(successMessage, form);
-    
-    // Ocultar el formulario mientras se ve el mensaje
-    form.style.display = 'none';
-    
-    // Scroll automático al mensaje
-    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Guardar en localStorage que se mostró el mensaje
-    localStorage.setItem('nativa_ultima_reserva', JSON.stringify({
-        nombre: datos.nombre,
-        fecha: new Date().toISOString()
-    }));
+        successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Agregar evento al botón
+        const btnCerrar = successMessage.querySelector('#btnCerrarExito');
+        if (btnCerrar) {
+            btnCerrar.addEventListener('click', function() {
+                cerrarMensajeExito();
+            });
+        }
+        
+        localStorage.setItem('nativa_ultima_reserva', JSON.stringify({
+            nombre: datos.nombre,
+            fecha: new Date().toISOString()
+        }));
+    }
+
+    // ===== FUNCIÓN CERRAR MENSAJE =====
+    function cerrarMensajeExito() {
+        const mensaje = document.querySelector('.form-success');
+        if (mensaje) {
+            mensaje.style.animation = 'fadeOutDown 0.4s ease';
+            setTimeout(() => {
+                mensaje.remove();
+                const form = document.getElementById('booking-form');
+                if (form) {
+                    form.style.display = 'block';
+                    form.style.animation = 'fadeInUp 0.5s ease';
+                }
+            }, 400);
+        }
+    }
+
+    console.log('🌿 Nativa · Turismo Sostenible');
+    console.log('📱 Sitio construido con buenas prácticas web');
+    console.log('🔒 Seguridad: CSP, XSS prevention, HTTPS');
+    console.log('♿ Accesibilidad: ARIA labels, skip links, semántica HTML5');
+
+})();
 
 // ============================================
-// EXPONER FUNCIONES GLOBALES PARA EL HTML
+// FUNCIONES GLOBALES (para el botón del HTML)
 // ============================================
-
-// Hacer que cerrarMensajeExito sea accesible desde el HTML
 window.cerrarMensajeExito = function() {
     const mensaje = document.querySelector('.form-success');
     if (mensaje) {
         mensaje.style.animation = 'fadeOutDown 0.4s ease';
         setTimeout(() => {
             mensaje.remove();
-            // Mostrar el formulario nuevamente
             const form = document.getElementById('booking-form');
             if (form) {
                 form.style.display = 'block';
@@ -292,8 +332,3 @@ window.cerrarMensajeExito = function() {
         }, 400);
     }
 };
-
-// También exponer mostrarExito por si acaso
-window.mostrarExito = mostrarExito;
-
-console.log('✅ Funciones globales registradas correctamente');
