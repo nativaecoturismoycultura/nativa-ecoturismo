@@ -222,7 +222,61 @@
             };
             return labels[value] || value;
         }
-    }
+    }// ===== FUNCIÓN PARA MOSTRAR MENSAJE DE ÉXITO =====
+function mostrarExito(datos) {
+    // Remover mensajes anteriores
+    document.querySelectorAll('.form-success, .form-error-summary').forEach(el => el.remove());
+    
+    const successMessage = document.createElement('div');
+    successMessage.className = 'form-success';
+    successMessage.style.cssText = `
+        background-color: #e8f8e8;
+        color: #1a7a1a;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        border-left: 4px solid #2ecc71;
+        margin-bottom: 20px;
+        animation: fadeIn 0.5s ease;
+    `;
+    
+    const experienciaLabels = {
+        'rios': '🌊 Entre Ríos',
+        'sabana': '🔥 Sabana Ancestral'
+    };
+    
+    successMessage.innerHTML = `
+        <h3 style="font-family: 'Fraunces', serif; font-size: 1.5rem; margin-bottom: 10px;">
+            ✅ ¡Reserva solicitada!
+        </h3>
+        <p><strong>${datos.nombre}</strong>, tu solicitud para <strong>${experienciaLabels[datos.experiencia] || datos.experiencia}</strong> está en proceso.</p>
+        <p style="margin: 10px 0;">📅 ${datos.fecha} · 👥 ${datos.participantes} personas</p>
+        <div style="background: #f0f7f0; padding: 12px; border-radius: 8px; margin: 15px 0;">
+            <p style="margin: 0; font-size: 0.9rem; color: #2d5a2d;">
+                📧 Se ha enviado una copia a <strong>${datos.email}</strong>
+            </p>
+        </div>
+        <p style="font-size: 0.9rem; color: #555; margin-top: 10px;">
+            Una persona de Nativa te contactará para confirmar los detalles.
+        </p>
+        <button onclick="location.reload()" style="
+            margin-top: 15px;
+            background: #173f35;
+            color: #f8f4ea;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        ">Hacer otra reserva</button>
+    `;
+    
+    const form = document.getElementById('booking-form');
+    form.insertBefore(successMessage, form.firstChild);
+    
+    // Scroll al mensaje
+    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
 
     // ===== DETECCIÓN DE CONEXIÓN =====
     if ('connection' in navigator) {
