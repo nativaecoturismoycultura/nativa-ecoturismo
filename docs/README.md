@@ -1,12 +1,12 @@
-# 🌿 Nativa · Turismo Sostenible
+# 🌿 Nativa · Ecoturismo y cultura
 
-## Sitio web de ecoturismo comunitario en Suba, Bogotá
+## Sitio web de ecoturismo comunitario
 
 ---
 
 ## 📋 Descripción
 
-Este proyecto es un sitio web **open source**, **responsivo**, **accesible** y **seguro**. Representa la plataforma digital de **Nativa Turismo Comunitario**, una iniciativa que conecta a visitantes con experiencias sostenibles, productos locales y servicios en la localidad de Suba, Bogotá.
+Este proyecto es un sitio web **open source**, **responsivo**, **accesible** y **seguro**. Representa la plataforma digital de **Nativa Ecoturismo Comunitario**, una iniciativa que conecta a visitantes con experiencias sostenibles, productos locales y servicios culturales en Bogotá.
 
 ---
 
