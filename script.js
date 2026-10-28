@@ -11,7 +11,7 @@
     }
 
     // ⚠️ Verifica que esta URL sea la COMPLETA de tu Apps Script (termina en /exec)
-    const URL_API = 'https://script.google.com/macros/s/AKfycbw-TFGzcZXgGxegGWy1FcGyNBYguU8GWAi8Nn6NqJa1RGwV-ph_BGq1E3RpwRBOcd1-/exec';
+    const URL_API = 'https://script.google.com/macros/s/AKfycbw1Jb5Bojes70Kxy1sp1WZQ5DWWV03z2jyja568z36UOEvsiPLILHJAyVtNjnkTkk7h/exec';
     const COOLDOWN_MS = 30000;
     const TIMEOUT_MS = 15000;
     const RUTAS = ['rios', 'sabana', 'cerro'];
