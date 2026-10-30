@@ -204,7 +204,7 @@ button {
     left: 0;
     right: 0;
     z-index: 1000;
-    background-color: rgba(23, 63, 53, 0.95);
+    background-color: rgba(94, 108, 88);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(248, 244, 234, 0.1);
