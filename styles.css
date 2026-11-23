@@ -767,7 +767,7 @@ section {
 
 /* ===== FOOTER ===== */
 .footer {
-    background-color: #0d2a22;
+    background-color: #173f35;
     padding: var(--spacing-xl) 0;
     color: var(--color-secondary);
 }
@@ -1160,3 +1160,4 @@ section {
 .radio-option input { margin-top: 0.25rem; width: 1.1rem; height: 1.1rem; flex-shrink: 0; }
 .radio-option:has(input:checked) { border-color: var(--color-accent); background: #fff8e8; }
 .valor-estimado { margin-top: var(--spacing-xs); font-size: 0.9rem; font-weight: 600; color: var(--color-primary); min-height: 1.2rem; }
+
